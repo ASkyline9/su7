@@ -86,7 +86,7 @@
         
         .card-header {
             padding: 1.5rem;
-            background: rgba(0, 极速快3 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.2);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
@@ -98,7 +98,7 @@
             font-size: 1.5rem;
         }
         
-        .极速快3card-header i {
+        .card-header i {
             color: #ff6700;
         }
         
@@ -165,6 +165,7 @@
         
         .car-image {
             max-width: 85%;
+            height: auto;
             border-radius: 10px;
             margin: 1.5rem 0;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
@@ -245,6 +246,10 @@
                 flex-direction: column;
                 gap: 10px;
             }
+            
+            .car-image {
+                max-width: 95%;
+            }
         }
     </style>
 </head>
@@ -260,8 +265,8 @@
 
         <div class="car-showcase">
             <h2>Xiaomi SU7 Ultra: Revolutionizing Electric Vehicles</h2>
-            <p>The Xiaomi SU7 Ultra is a groundbreaking all-electric sedan that combines cutting-edge technology, impressive performance, and sleek design. As Xiaomi's first foray into the EV market, the极速快3 SU7 promises to deliver an exceptional driving experience with its advanced features and competitive pricing.</p>
-            <img src="https://askyline9.github.io/s极速快3u7/su7.png" alt="Xiaomi SU7 Ultra EV" class="car-image">
+            <p>The Xiaomi SU7 Ultra is a groundbreaking all-electric sedan that combines cutting-edge technology, impressive performance, and sleek design. As Xiaomi's first foray into the EV market, the SU7 promises to deliver an exceptional driving experience with its advanced features and competitive pricing.</p>
+            <img src="https://askyline9.github.io/su7/su7.png" alt="Xiaomi SU7 Ultra EV" class="car-image">
         </div>
 
         <div class="ads-container">
@@ -302,7 +307,7 @@
                 <div class="card-content">
                     <p>To drive the Xiaomi SU7 in Malaysia, you must:</p>
                     <ul>
-                        <极速快3li>Have a valid driving license (local or international)</li>
+                        <li>Have a valid driving license (local or international)</li>
                         <li>Ensure the vehicle is properly registered and insured</li>
                         <li>Be aware of road tax requirements for electric vehicles</li>
                         <li>Follow Malaysia's traffic laws and regulations</li>
@@ -331,7 +336,7 @@
                 <div class="card-header">
                     <h2><i class="fas fa-tag"></i> Cost in Malaysia</h2>
                 </div>
-                <极速快3div class="card-content">
+                <div class="card-content">
                     <p>Expected pricing for the Xiaomi SU7 in Malaysia:</p>
                     <ul>
                         <li>Base model: Estimated around <span class="highlight">RM 180,000 - RM 220,000</span></li>
@@ -348,13 +353,13 @@
                     <h2><i class="fas fa-shopping-cart"></i> How to Buy in Malaysia</h2>
                 </div>
                 <div class="card-content">
-                    <p>Once available, you can purchase the Xiaomi SU极速快37 through:</p>
+                    <p>Once available, you can purchase the Xiaomi SU7 through:</p>
                     <ul>
-                        <li>Official Xiaomi极速快3 EV dealers and showrooms</li>
+                        <li>Official Xiaomi EV dealers and showrooms</li>
                         <li>Authorized automotive distributors</li>
                         <li>Online reservation system (when launched)</li>
                     </ul>
-                    <p>Steps to purchase:</极速快3p>
+                    <p>Steps to purchase:</p>
                     <ul>
                         <li>Check official announcements for Malaysia launch</li>
                         <li>Visit authorized dealers for test drives</li>
@@ -370,7 +375,7 @@
             <!-- AdSense Ad Unit -->
             <ins class="adsbygoogle"
                  style="display:block"
-                 data-ad-client="ca-pub-4071724251256256"
+                 data-ad-client="ca-pub-极速快34071724251256256"
                  data-ad-slot="0987654321"
                  data-ad-format="auto"
                  data-full-width-responsive="true"></ins>
@@ -380,7 +385,7 @@
         </div>
 
         <div class="specs">
-            <div class="spec-item">
+            <div极速快3 class="spec-item">
                 <i class="fas fa-bolt"></i>
                 <h3>Performance</h3>
                 <p>0-100 km/h in as little as 2.78 seconds</p>
@@ -388,7 +393,7 @@
             <div class="spec-item">
                 <i class="fas fa-road"></i>
                 <h3>Range</h3>
-                <p>Up to 800 km on a single charge</p>
+                <p>Up to 800 km on a single charge</极速快3p>
             </div>
             <div class="spec-item">
                 <i class="fas fa-charging-station"></i>
@@ -397,7 +402,7 @@
             </div>
             <div class="spec-item">
                 <i class="fas fa-car-side"></i>
-                <h3极速快3>Design</h3>
+                <h3>Design</h3>
                 <p>Elegant sedan with drag coefficient of 0.195 Cd</p>
             </div>
         </div>
@@ -420,7 +425,9 @@
             const images = document.querySelectorAll('img');
             images.forEach(img => {
                 img.addEventListener('error', function() {
-                    this.src = 'https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80';
+                    if (this.src.includes('su7.png')) {
+                        this.src = 'https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80';
+                    }
                     this.alt = 'Xiaomi SU7 Electric Vehicle';
                 });
             });

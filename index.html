@@ -9,6 +9,7 @@
     <meta name="author" content="Skyline Hub">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4071724251256256" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -227,6 +228,66 @@
             text-decoration: underline;
         }
         
+        .notification-badge {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #EA4335;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 50px;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .config-panel {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border-left: 4px solid #4facfe;
+        }
+        
+        .config-panel h3 {
+            color: #4facfe;
+            margin-bottom: 15px;
+        }
+        
+        .config-panel p {
+            margin-bottom: 15px;
+            color: #cccccc;
+        }
+        
+        .config-panel a {
+            color: #4facfe;
+            text-decoration: none;
+        }
+        
+        .config-panel a:hover {
+            text-decoration: underline;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-active {
+            background-color: #4CAF50;
+        }
+        
+        .status-inactive {
+            background-color: #f44336;
+        }
+        
         @media (max-width: 768px) {
             .card-container {
                 grid-template-columns: 1fr;
@@ -401,13 +462,33 @@
             </div>
         </div>
 
+        <div class="config-panel">
+            <h3><i class="fas fa-envelope"></i> Gmail Notification Status</h3>
+            <p><span class="status-indicator status-active"></span> Notifications are <strong>active</strong> and will be sent to aa.skyline99@gmail.com</p>
+            <p>You will receive an email with the following information when someone visits your site:</p>
+            <ul>
+                <li>Visitor's IP address</li>
+                <li>Date and time of visit</li>
+                <li>Browser and device information</li>
+            </ul>
+        </div>
+
         <footer>
             <p>© 2025 <a href="https://askyline9.github.io" target="_blank">Skyline Hub</a> | All Rights Reserved. Email: <a href="mailto:aa.skyline99@gmail.com">aa.skyline99@gmail.com</a></p>
             <p>Note: This is a conceptual project page. Actual product details may vary.</p>
         </footer>
     </div>
 
+    <!-- Gmail Notification Badge -->
+    <div class="notification-badge" id="gmailNotification">
+        <i class="fas fa-envelope"></i>
+        <span>Visitor Alert Active</span>
+    </div>
+
     <script>
+        // Initialize EmailJS with your credentials
+        emailjs.init("u8q8lvRWe9DBYUXRt");
+        
         // AdSense initialization
         (adsbygoogle = window.adsbygoogle || []).push({});
         
@@ -420,6 +501,69 @@
                     this.alt = 'Xiaomi SU7 Electric Vehicle';
                 });
             });
+            
+            // Send visitor notification
+            sendVisitorNotification();
+        });
+
+        // Function to get visitor's IP address
+        async function getVisitorIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.error('Error fetching IP:', error);
+                return 'Unknown IP';
+            }
+        }
+
+        // Function to send Gmail notification
+        async function sendVisitorNotification() {
+            // Check if we've already notified for this session
+            if (sessionStorage.getItem('gmailNotificationSent')) {
+                return;
+            }
+            
+            try {
+                const ip = await getVisitorIP();
+                const now = new Date();
+                const dateTime = now.toLocaleString();
+                const userAgent = navigator.userAgent;
+                
+                // Prepare email parameters
+                const templateParams = {
+                    to_email: 'aa.skyline99@gmail.com',
+                    ip_address: ip,
+                    date_time: dateTime,
+                    user_agent: userAgent,
+                    website: 'Xiaomi SU7 Page'
+                };
+                
+                // Send email using EmailJS with your template
+                emailjs.send('service_cc9cmen', 'template_kel4u0e', templateParams)
+                    .then(function(response) {
+                        console.log('SUCCESS!', response.status, response.text);
+                    }, function(error) {
+                        console.log('FAILED...', error);
+                    });
+                
+                // Mark notification as sent for this session
+                sessionStorage.setItem('gmailNotificationSent', 'true');
+                
+            } catch (error) {
+                console.error('Error sending notification:', error);
+            }
+        }
+
+        // Optional: Manual test button functionality
+        document.getElementById('gmailNotification').addEventListener('click', function() {
+            sessionStorage.removeItem('gmailNotificationSent');
+            sendVisitorNotification();
+            this.innerHTML = '<i class="fas fa-envelope"></i> <span>Test Notification Sent</span>';
+            setTimeout(() => {
+                this.innerHTML = '<i class="fas fa-envelope"></i> <span>Visitor Alert Active</span>';
+            }, 3000);
         });
     </script>
 </body>

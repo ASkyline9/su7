@@ -245,47 +245,40 @@
             cursor: pointer;
         }
         
-        .config-panel {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
+        .debug-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px;
             border-radius: 10px;
-            margin-top: 30px;
-            border-left: 4px solid #4facfe;
+            font-size: 12px;
+            z-index: 1000;
+            max-width: 300px;
+            display: none;
         }
         
-        .config-panel h3 {
+        .debug-panel h4 {
+            margin-bottom: 10px;
             color: #4facfe;
-            margin-bottom: 15px;
         }
         
-        .config-panel p {
-            margin-bottom: 15px;
-            color: #cccccc;
-        }
-        
-        .config-panel a {
-            color: #4facfe;
-            text-decoration: none;
-        }
-        
-        .config-panel a:hover {
-            text-decoration: underline;
-        }
-        
-        .status-indicator {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
+        .debug-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4facfe;
+            color: white;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            margin-right: 8px;
-        }
-        
-        .status-active {
-            background-color: #4CAF50;
-        }
-        
-        .status-inactive {
-            background-color: #f44336;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
         
         @media (max-width: 768px) {
@@ -304,6 +297,12 @@
             .logo-container {
                 flex-direction: column;
                 gap: 10px;
+            }
+            
+            .debug-panel {
+                top: 70px;
+                right: 20px;
+                max-width: calc(100% - 40px);
             }
         }
     </style>
@@ -462,17 +461,6 @@
             </div>
         </div>
 
-        <div class="config-panel">
-            <h3><i class="fas fa-envelope"></i> Gmail Notification Status</h3>
-            <p><span class="status-indicator status-active"></span> Notifications are <strong>active</strong> and will be sent to aa.skyline99@gmail.com</p>
-            <p>You will receive an email with the following information when someone visits your site:</p>
-            <ul>
-                <li>Visitor's IP address</li>
-                <li>Date and time of visit</li>
-                <li>Browser and device information</li>
-            </ul>
-        </div>
-
         <footer>
             <p>© 2025 <a href="https://askyline9.github.io" target="_blank">Skyline Hub</a> | All Rights Reserved. Email: <a href="mailto:aa.skyline99@gmail.com">aa.skyline99@gmail.com</a></p>
             <p>Note: This is a conceptual project page. Actual product details may vary.</p>
@@ -485,12 +473,40 @@
         <span>Visitor Alert Active</span>
     </div>
 
+    <!-- Debug Toggle Button -->
+    <div class="debug-toggle" id="debugToggle">
+        <i class="fas fa-bug"></i>
+    </div>
+
+    <!-- Debug Panel -->
+    <div class="debug-panel" id="debugPanel">
+        <h4>Email Notification Debug</h4>
+        <div id="debugInfo">
+            <p>EmailJS Status: <span id="emailjsStatus">Checking...</span></p>
+            <p>Last Notification: <span id="lastNotification">None</span></p>
+            <p>Visitor IP: <span id="visitorIp">Checking...</span></p>
+        </div>
+        <button id="testEmail" style="margin-top: 10px; padding: 5px 10px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Test Email</button>
+    </div>
+
     <script>
         // Initialize EmailJS with your credentials
         emailjs.init("u8q8lvRWe9DBYUXRt");
         
         // AdSense initialization
         (adsbygoogle = window.adsbygoogle || []).push({});
+        
+        // Debug panel functionality
+        const debugToggle = document.getElementById('debugToggle');
+        const debugPanel = document.getElementById('debugPanel');
+        const emailjsStatus = document.getElementById('emailjsStatus');
+        const lastNotification = document.getElementById('lastNotification');
+        const visitorIp = document.getElementById('visitorIp');
+        const testEmailBtn = document.getElementById('testEmail');
+        
+        debugToggle.addEventListener('click', () => {
+            debugPanel.style.display = debugPanel.style.display === 'block' ? 'none' : 'block';
+        });
         
         // Simple image fallback handling
         document.addEventListener('DOMContentLoaded', function() {
@@ -500,6 +516,14 @@
                     this.src = 'https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80';
                     this.alt = 'Xiaomi SU7 Electric Vehicle';
                 });
+            });
+            
+            // Update debug info
+            emailjsStatus.textContent = 'Initialized';
+            
+            // Get and display visitor IP
+            getVisitorIP().then(ip => {
+                visitorIp.textContent = ip;
             });
             
             // Send visitor notification
@@ -522,6 +546,7 @@
         async function sendVisitorNotification() {
             // Check if we've already notified for this session
             if (sessionStorage.getItem('gmailNotificationSent')) {
+                lastNotification.textContent = 'Already sent in this session';
                 return;
             }
             
@@ -531,32 +556,37 @@
                 const dateTime = now.toLocaleString();
                 const userAgent = navigator.userAgent;
                 
-                // Prepare email parameters
+                // Prepare email parameters - FIXED VERSION
+                // The recipient email should be hardcoded in the template, not passed as a parameter
                 const templateParams = {
-                    to_email: 'aa.skyline99@gmail.com',
+                    reply_to: 'aa.skyline99@gmail.com', // This can be used if needed
+                    from_name: 'Website Visitor Alert',
                     ip_address: ip,
                     date_time: dateTime,
                     user_agent: userAgent,
-                    website: 'Xiaomi SU7 Page'
+                    website: 'Xiaomi SU7 Page',
+                    to_email: 'aa.skyline99@gmail.com' // Add this if your template expects it
                 };
                 
                 // Send email using EmailJS with your template
                 emailjs.send('service_cc9cmen', 'template_kel4u0e', templateParams)
                     .then(function(response) {
                         console.log('SUCCESS!', response.status, response.text);
+                        lastNotification.textContent = `Success: ${new Date().toLocaleTimeString()}`;
+                        // Mark notification as sent for this session
+                        sessionStorage.setItem('gmailNotificationSent', 'true');
                     }, function(error) {
                         console.log('FAILED...', error);
+                        lastNotification.textContent = `Failed: ${error.text || 'Unknown error'}`;
                     });
-                
-                // Mark notification as sent for this session
-                sessionStorage.setItem('gmailNotificationSent', 'true');
                 
             } catch (error) {
                 console.error('Error sending notification:', error);
+                lastNotification.textContent = `Error: ${error.message}`;
             }
         }
 
-        // Optional: Manual test button functionality
+        // Manual test button functionality
         document.getElementById('gmailNotification').addEventListener('click', function() {
             sessionStorage.removeItem('gmailNotificationSent');
             sendVisitorNotification();
@@ -564,6 +594,12 @@
             setTimeout(() => {
                 this.innerHTML = '<i class="fas fa-envelope"></i> <span>Visitor Alert Active</span>';
             }, 3000);
+        });
+        
+        // Test email button in debug panel
+        testEmailBtn.addEventListener('click', () => {
+            sessionStorage.removeItem('gmailNotificationSent');
+            sendVisitorNotification();
         });
     </script>
 </body>
